@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4311719994379342604}
   - component: {fileID: 7267214131730518396}
   m_Layer: 0
-  m_Name: BlockGenerateCell
+  m_Name: BlockCell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
