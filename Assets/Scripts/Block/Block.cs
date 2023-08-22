@@ -4,30 +4,25 @@ using UnityEngine;
 
 public class Block : MonoBehaviour, IBreakable
 {
-    private Color color; //ブロックの色
+    public Color Color { get; private set; } //ブロックの色
     private Material material; //ブロックのマテリアル
-    private Color[] blockColors = { Color.red, Color.blue, Color.green, Color.yellow }; //ブロックの色のテーブル
-
-    public Color Color //ブロックの色のゲッター
-    {
-        get { return color; }
-    }
+    private Color[] blockColors = { Color.red, Color.green, Color.blue}; //ブロックの色のテーブル
 
     public event System.Action OnBreak; //ブロックが破壊されたときに呼ばれるイベント
 
-    void Awake()
+    private void OnEnable()
     {
         material = GetComponent<Renderer>().material;
 
         //ブロックの色をランダムに設定
-        color = blockColors[Random.Range(0, blockColors.Length)]; 
-        material.color = color;
+        Color = blockColors[Random.Range(0, blockColors.Length)]; 
+        material.color = Color;
     }
 
     //破壊時処理
     public void Break()
     {
         OnBreak?.Invoke(); //イベントを発行
-        Destroy(gameObject);//自身を破壊する
+        gameObject.SetActive(false); //自身を無効にする
     }
 }
