@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
     private void Move(Vector3 direction)
     {
         Vector3 move = transform.position + direction * moveSpeed * Time.deltaTime;
-        move.x = Mathf.Clamp(move.x, minMoveRange, maxMoveRange);
+        move.x = Mathf.Clamp(move.x, minMoveRange, maxMoveRange); //ˆÚ“®”ÍˆÍ‚ğ§ŒÀ
         rigid.MovePosition(move);
     }
 

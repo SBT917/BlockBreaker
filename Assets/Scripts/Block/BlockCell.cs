@@ -14,7 +14,7 @@ public class BlockCell : MonoBehaviour
 
     void Awake()
     {
-        GenerateBlock();
+        GenerateBlock();     
     }
 
     //ƒuƒƒbƒN‚Ì¶¬
