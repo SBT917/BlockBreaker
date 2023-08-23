@@ -1,8 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 //ボールの動きや反射を制御するスクリプト
 public class BallController : MonoBehaviour
@@ -12,10 +11,11 @@ public class BallController : MonoBehaviour
 
     public event System.Action OnOutOfScreen; //ボールが画面外に出た際に呼ばれるイベント
 
-    private void Start()
+    public Vector3 Direction { get { return rigid.velocity.normalized; } set { rigid.velocity = value; } }
+
+    private void OnEnable()
     {
         TryGetComponent(out rigid);
-        rigid.velocity = new Vector3(0.0f, -1.0f, 0.0f) * moveSpeed; //初速を与える
     }
 
     private void Update()
@@ -34,25 +34,34 @@ public class BallController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        //プレイヤーにぶつかった際の反射処理
+        if (collision.transform.CompareTag("Player"))
+        {
+            //当たったオブジェクトとボールの位置を取得
+            Vector3 hitPos = collision.transform.position;
+            Vector3 ballPos = transform.position;
+
+            //プレイヤーの中心を少し下にずらす
+            hitPos.y -= 1.5f;
+
+            //ベクトルを取得
+            Vector3 vector = ballPos - hitPos;
+
+            rigid.velocity = vector.normalized * moveSpeed;
+
+            return;
+        }
+
         //破壊可能オブジェクトにぶつかった際の処理
-        if(collision.transform.TryGetComponent(out IBreakable breakable))
+        if (collision.transform.TryGetComponent(out IBreakable breakable))
         {
             breakable.Break(); //破壊処理を呼ぶ
         }
 
-        //プレイヤーにぶつかった際の反射処理を変更
-        if (collision.transform.CompareTag("Player"))
-        {
-            //プレイヤーとボールの位置を取得
-            Vector3 hitPos = collision.transform.position;
-            Vector3 ballPos = transform.position;
-
-            //プレイヤーとボールのベクトルを取得
-            Vector3 vector = ballPos - hitPos;
-            vector.Normalize();
-
-            //ボールの反射
-            rigid.velocity = vector * moveSpeed;
-        }
+        //反射の矯正
+        Vector3 newVector = rigid.velocity;
+        if(rigid.velocity.normalized.x > 0.99f) { newVector.x = 0.5f; }
+        else if(rigid.velocity.normalized.x < -0.99f) { newVector.x = -0.5f; }
+        rigid.velocity = newVector * moveSpeed;
     }
 }
